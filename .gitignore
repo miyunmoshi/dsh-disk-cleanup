@@ -1,0 +1,22 @@
+# Installed dependencies and build output
+node_modules/
+dist/
+coverage/
+
+# Local plugin data created during development
+last-scan.json
+Quarantine/
+*.log
+
+# Environment files and local secrets
+.env
+.env.*
+
+# Packaging artifacts
+*.tgz
+*.zip
+
+# Operating-system metadata
+.DS_Store
+Thumbs.db
+desktop.ini
