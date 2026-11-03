@@ -5,8 +5,21 @@ window.__ModuleLoader__.load({
     const h = React.createElement
     const NS = 'disk-cleanup'
     const API_ROOT = '/dsh-disk-cleanup/api'
-    const CATEGORY_ORDER = ['temp', 'browser', 'appcache', 'update', 'logs', 'devcache', 'recycle', 'large', 'duplicate']
-    const PHASES = ['preparing', 'appdata', 'temp', 'system', 'devcache', 'user-files', 'duplicates', 'recycle', 'finalizing', 'done']
+    const CATEGORY_ORDER = ['temp', 'browser', 'appcache', 'update', 'uninstall', 'logs', 'devcache', 'recycle', 'large', 'duplicate']
+    const KIND_ORDER = ['cache', 'logs', 'residue', 'updater', 'temp', 'duplicate', 'large', 'recycle']
+    const KIND_OF_CATEGORY = {
+      temp: 'temp',
+      browser: 'cache',
+      appcache: 'cache',
+      update: 'updater',
+      uninstall: 'residue',
+      logs: 'logs',
+      devcache: 'cache',
+      recycle: 'recycle',
+      large: 'large',
+      duplicate: 'duplicate',
+    }
+    const PHASES = ['preparing', 'appdata', 'temp', 'system', 'devcache', 'user-files', 'duplicates', 'recycle', 'extra-drive', 'finalizing', 'done']
 
     const ZH = {
       nav: '磁盘清理',
@@ -37,7 +50,7 @@ window.__ModuleLoader__.load({
       sumCandidates: '发现候选',
       sumSafe: '安全缓存',
       sumReview: '需人工复核',
-      sumFree: 'C 盘可用',
+      sumFree: '系统盘可用',
       files: '个文件',
       items: '项',
       batches: '批次',
@@ -48,11 +61,37 @@ window.__ModuleLoader__.load({
       'category.browser': '浏览器缓存',
       'category.appcache': '应用缓存',
       'category.update': '更新与安装残留',
+      'category.uninstall': '卸载残留',
       'category.logs': '日志与崩溃转储',
       'category.devcache': '开发工具缓存',
       'category.recycle': '回收站（仅说明）',
       'category.large': '大文件复核',
       'category.duplicate': '重复文件',
+      kindTitle: '垃圾类型',
+      'kind.all': '全部类型',
+      'kind.cache': '缓存',
+      'kind.logs': '日志',
+      'kind.residue': '卸载/残留',
+      'kind.updater': '安装与更新',
+      'kind.temp': '临时文件',
+      'kind.duplicate': '重复文件',
+      'kind.large': '大文件',
+      'kind.recycle': '回收站',
+      kindFilter: '垃圾类型筛选',
+      selectCurrentSafe: '选中当前筛选',
+      driveTitle: '选择扫描磁盘',
+      driveHint: '可多选，至少保留一个。C 盘深度扫描；其他盘只扫描常见缓存、日志、临时、更新和残留目录，不遍历用户文档与游戏内容。',
+      driveSystem: '系统盘',
+      driveOther: '其他盘',
+      driveKeepOne: '至少保留一个扫描磁盘',
+      collapse: '收起',
+      expand: '展开',
+      scannedDrives: '扫描磁盘',
+      orphanAppsTitle: '疑似卸载残留应用',
+      orphanAppsCount: '未匹配到已安装程序',
+      appOriginal: '应用原名',
+      company: '公司/厂商',
+      noDrives: '没有可扫描的磁盘',
       search: '搜索文件名、路径、用途…',
       filterAll: '全部风险',
       filterSafe: '仅安全',
@@ -142,6 +181,7 @@ window.__ModuleLoader__.load({
       'phase.user-files': '扫描用户大文件',
       'phase.duplicates': '校验重复文件',
       'phase.recycle': '检查回收站',
+      'phase.extra-drive': '扫描其他磁盘',
       'phase.finalizing': '整理结果',
       'phase.done': '完成',
       'skip.permission': '权限拒绝',
@@ -206,7 +246,7 @@ window.__ModuleLoader__.load({
       sumCandidates: 'Candidates',
       sumSafe: 'Safe cache',
       sumReview: 'Needs review',
-      sumFree: 'Free on C:',
+      sumFree: 'System drive free',
       files: 'files',
       items: 'items',
       batches: 'batches',
@@ -217,11 +257,37 @@ window.__ModuleLoader__.load({
       'category.browser': 'Browser cache',
       'category.appcache': 'App cache',
       'category.update': 'Update leftovers',
+      'category.uninstall': 'Uninstall leftovers',
       'category.logs': 'Logs & dumps',
       'category.devcache': 'Developer caches',
       'category.recycle': 'Recycle Bin (info)',
       'category.large': 'Large files to review',
       'category.duplicate': 'Duplicate files',
+      kindTitle: 'Junk type',
+      'kind.all': 'All types',
+      'kind.cache': 'Cache',
+      'kind.logs': 'Logs',
+      'kind.residue': 'Uninstall residue',
+      'kind.updater': 'Install/update',
+      'kind.temp': 'Temporary',
+      'kind.duplicate': 'Duplicates',
+      'kind.large': 'Large files',
+      'kind.recycle': 'Recycle Bin',
+      kindFilter: 'Filter by junk type',
+      selectCurrentSafe: 'Select filtered safe items',
+      driveTitle: 'Choose scan drives',
+      driveHint: 'Select one or more. C: is scanned deeply; other drives only scan common cache, log, temp, update, and residue folders, never documents or game content.',
+      driveSystem: 'System',
+      driveOther: 'Other',
+      driveKeepOne: 'Keep at least one drive selected',
+      collapse: 'Collapse',
+      expand: 'Expand',
+      scannedDrives: 'Scanned drives',
+      orphanAppsTitle: 'Suspected uninstall leftovers',
+      orphanAppsCount: 'No matching installed application',
+      appOriginal: 'Original app name',
+      company: 'Company/vendor',
+      noDrives: 'No drive is available to scan',
       search: 'Search name, path, or purpose…',
       filterAll: 'All risk levels',
       filterSafe: 'Safe only',
@@ -311,6 +377,7 @@ window.__ModuleLoader__.load({
       'phase.user-files': 'Scanning user files',
       'phase.duplicates': 'Hashing duplicate candidates',
       'phase.recycle': 'Inspecting Recycle Bin',
+      'phase.extra-drive': 'Scanning other drives',
       'phase.finalizing': 'Building the catalog',
       'phase.done': 'Done',
       'skip.permission': 'Permission denied',
@@ -364,6 +431,12 @@ window.__ModuleLoader__.load({
 }
 .ddc-heading { min-width: 0; flex: 1; }
 .ddc-title { margin: 0; font-size: 22px; line-height: 1.25; font-weight: 680; letter-spacing: -0.02em; }
+.ddc-titleline { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.ddc-version {
+  font-size: 9.5px; font-weight: 650; line-height: 1.4; padding: 1px 6px; border-radius: 999px;
+  color: var(--dsw-alias-label-secondary); border: 1px solid var(--dsw-alias-border-l1);
+  background: var(--dsw-alias-bg-layer-2); font-variant-numeric: tabular-nums;
+}
 .ddc-subtitle { margin: 5px 0 0; font-size: 12.5px; line-height: 1.55; color: var(--dsw-alias-label-secondary); max-width: 780px; }
 .ddc-header-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
 .ddc-btn {
@@ -420,6 +493,17 @@ window.__ModuleLoader__.load({
 .ddc-navrow.active .ddc-navdot { background: var(--dsw-alias-brand-primary); opacity: 1; }
 .ddc-navlabel { min-width: 0; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .ddc-navmeta { font-size: 10.5px; color: var(--dsw-alias-label-secondary); font-variant-numeric: tabular-nums; flex: none; }
+.ddc-drives { display: flex; flex-direction: column; gap: 2px; }
+.ddc-drive {
+  border: 1px solid transparent; border-radius: 8px; padding: 6px 8px; display: flex; align-items: center;
+  gap: 8px; font-size: 12px; color: var(--dsw-alias-label-primary); cursor: pointer; min-width: 0;
+}
+.ddc-drive:hover { background: var(--dsw-alias-bg-layer-2); }
+.ddc-drive-name { font-weight: 620; flex: none; font-variant-numeric: tabular-nums; }
+.ddc-drive-meta {
+  min-width: 0; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  font-size: 10.5px; color: var(--dsw-alias-label-secondary); text-align: right; font-variant-numeric: tabular-nums;
+}
 .ddc-app-row { margin: 8px 0; }
 .ddc-app-top { display: flex; justify-content: space-between; gap: 8px; font-size: 11px; margin-bottom: 4px; }
 .ddc-app-top span:first-child { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -460,6 +544,19 @@ window.__ModuleLoader__.load({
 .ddc-stat-label { font-size: 11px; color: var(--dsw-alias-label-secondary); margin-bottom: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .ddc-stat-value { font-size: 18px; font-weight: 650; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .ddc-stat-sub { font-size: 10.5px; color: var(--dsw-alias-label-secondary); margin-top: 3px; }
+.ddc-drive-sections { display: flex; flex-direction: column; gap: 10px; }
+.ddc-drive-section { min-width: 0; }
+.ddc-drive-section + .ddc-drive-section { margin-top: 2px; }
+.ddc-drive-section-head {
+  display: flex; align-items: center; gap: 7px; padding: 8px 10px; margin-bottom: 8px;
+  width: 100%; appearance: none; font: inherit; text-align: left; cursor: pointer;
+  color: var(--dsw-alias-label-primary); border: 1px solid var(--dsw-alias-border-l1); border-radius: 10px;
+  background: color-mix(in srgb, var(--dsw-alias-brand-primary) 6%, var(--dsw-alias-bg-layer-2));
+}
+.ddc-drive-section-head:hover { border-color: color-mix(in srgb, var(--dsw-alias-brand-primary) 28%, var(--dsw-alias-border-l1)); }
+.ddc-drive-section-head .ddc-icon { color: var(--dsw-alias-brand-primary); flex: none; }
+.ddc-drive-section-head strong { font-size: 13px; font-weight: 680; letter-spacing: -0.01em; }
+.ddc-drive-section-meta { margin-left: auto; font-size: 10.5px; color: var(--dsw-alias-label-secondary); font-variant-numeric: tabular-nums; }
 .ddc-group { border: 1px solid var(--dsw-alias-border-l1); background: var(--dsw-alias-bg-layer-1); border-radius: 12px; overflow: hidden; margin-bottom: 9px; }
 .ddc-group-head { display: flex; align-items: center; gap: 8px; padding: 9px 11px; background: color-mix(in srgb, var(--dsw-alias-bg-layer-2) 42%, var(--dsw-alias-bg-layer-1)); min-height: 42px; }
 .ddc-group-head:hover { background: var(--dsw-alias-bg-layer-2); }
@@ -531,6 +628,17 @@ window.__ModuleLoader__.load({
 .ddc-hero h2 { margin: 0 0 8px; font-size: 24px; letter-spacing: -0.025em; font-weight: 680; }
 .ddc-hero p { margin: 0; color: var(--dsw-alias-label-secondary); font-size: 12.5px; line-height: 1.65; max-width: 720px; }
 .ddc-hero-actions { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-top: 18px; }
+.ddc-hero-setup {
+  margin-top: 14px; padding: 11px 12px; border: 1px solid var(--dsw-alias-border-l1);
+  border-radius: 10px; background: color-mix(in srgb, var(--dsw-alias-bg-layer-2) 45%, var(--dsw-alias-bg-layer-1));
+}
+.ddc-hero-setup-label { display: block; margin-bottom: 7px; font-size: 11px; font-weight: 650; color: var(--dsw-alias-label-primary); }
+.ddc-drives-inline { flex-direction: row; flex-wrap: wrap; gap: 6px; }
+.ddc-drives-inline .ddc-drive {
+  flex: 1 1 150px; border: 1px solid var(--dsw-alias-border-l1); border-radius: 8px;
+  padding: 6px 9px; background: var(--dsw-alias-bg-layer-1);
+}
+.ddc-drives-inline .ddc-drive-meta { text-align: left; font-size: 10px; }
 .ddc-toggle { display: inline-flex; align-items: center; gap: 8px; font-size: 12px; color: var(--dsw-alias-label-primary); cursor: pointer; user-select: none; }
 .ddc-toggle input { width: 15px; height: 15px; accent-color: var(--dsw-alias-brand-primary); }
 .ddc-hero-hint { font-size: 10.5px; color: var(--dsw-alias-label-secondary); margin-top: 7px; line-height: 1.5; }
@@ -726,6 +834,14 @@ window.__ModuleLoader__.load({
       return tr(t, `risk.${risk}`, risk)
     }
 
+    function kindLabel(t, kind) {
+      return tr(t, `kind.${kind}`, kind)
+    }
+
+    function kindOfItem(item) {
+      return item.kind || KIND_OF_CATEGORY[item.categoryId] || 'cache'
+    }
+
     function phaseLabel(t, phase) {
       return tr(t, `phase.${phase}`, phase)
     }
@@ -863,16 +979,33 @@ window.__ModuleLoader__.load({
       }
     }
 
+    function driveRootOfItem(item) {
+      const match = /^([A-Za-z]):[\\/]/.exec(String(item?.path || ''))
+      return match ? `${match[1].toUpperCase()}:\\` : ''
+    }
+
+    function driveLetterOfRoot(root) {
+      const match = /^([A-Za-z]):/.exec(String(root || ''))
+      return match ? `${match[1].toUpperCase()}:` : '—'
+    }
+
+    function groupKeyOfItem(item) {
+      const base = item.groupId || `${item.categoryId}::${item.app}`
+      return `${driveRootOfItem(item)}::${base}`
+    }
+
     function deriveGroups(items) {
       const map = new Map()
       for (const item of items) {
-        const id = item.groupId || `${item.categoryId}::${item.app}`
+        const id = groupKeyOfItem(item)
         let group = map.get(id)
         if (!group) {
           group = {
             id,
             categoryId: item.categoryId,
             app: item.app || '—',
+            driveRoot: driveRootOfItem(item),
+            driveLetter: driveLetterOfRoot(driveRootOfItem(item)),
             items: [],
             count: 0,
             bytes: 0,
@@ -911,6 +1044,25 @@ window.__ModuleLoader__.load({
       return [...map.values()].sort((left, right) => {
         const a = CATEGORY_ORDER.indexOf(left.id)
         const b = CATEGORY_ORDER.indexOf(right.id)
+        return (a < 0 ? 99 : a) - (b < 0 ? 99 : b)
+      })
+    }
+
+    function deriveKinds(items) {
+      const map = new Map()
+      for (const item of items) {
+        const kind = kindOfItem(item)
+        let entry = map.get(kind)
+        if (!entry) {
+          entry = { id: kind, count: 0, bytes: 0 }
+          map.set(kind, entry)
+        }
+        entry.count += 1
+        entry.bytes += item.size
+      }
+      return [...map.values()].sort((left, right) => {
+        const a = KIND_ORDER.indexOf(left.id)
+        const b = KIND_ORDER.indexOf(right.id)
         return (a < 0 ? 99 : a) - (b < 0 ? 99 : b)
       })
     }
@@ -1007,9 +1159,12 @@ window.__ModuleLoader__.load({
         const [error, setError] = React.useState(null)
         const [selected, setSelected] = React.useState(() => new Set())
         const [activeCategory, setActiveCategory] = React.useState('all')
+        const [activeKind, setActiveKind] = React.useState('all')
         const [search, setSearch] = React.useState('')
         const [riskFilter, setRiskFilter] = React.useState('all')
+        const [selectedDrives, setSelectedDrives] = React.useState(() => ['C:\\'])
         const [expanded, setExpanded] = React.useState(() => new Set())
+        const [collapsedDrives, setCollapsedDrives] = React.useState(() => new Set())
         const [groupLimits, setGroupLimits] = React.useState({})
         const [detail, setDetail] = React.useState(null)
         const [cleanupOpen, setCleanupOpen] = React.useState(false)
@@ -1087,9 +1242,13 @@ window.__ModuleLoader__.load({
               setScan(full.scan)
               setSelected(new Set())
               setActiveCategory('all')
+              setActiveKind('all')
               setSearch('')
               setRiskFilter('all')
               setGroupLimits({})
+              if (Array.isArray(full.scan.drives) && full.scan.drives.length) {
+                setSelectedDrives(full.scan.drives.map((drive) => drive.root))
+              }
               setInfo((previous) =>
                 previous
                   ? {
@@ -1101,10 +1260,14 @@ window.__ModuleLoader__.load({
                         elapsedMs: full.scan.elapsedMs,
                         totals: full.scan.totals,
                         categories: full.scan.categories,
+                        kinds: full.scan.kinds,
+                        drives: full.scan.drives,
                         volume: full.scan.volume,
                         coverage: full.scan.coverage,
                         warnings: full.scan.warningCount,
                         skipped: full.scan.skipped,
+                        orphanApps: Array.isArray(full.scan.orphanApps) ? full.scan.orphanApps.length : 0,
+                        installedAppIndex: full.scan.installedAppIndex,
                         platform: full.scan.platform,
                       },
                     }
@@ -1137,18 +1300,39 @@ window.__ModuleLoader__.load({
                 setQuarantine((previous) => ({ ...previous, summary: nextInfo.quarantine }))
               }
               if (nextInfo.activeScan?.status === 'running') {
+                if (nextInfo.drives?.length) {
+                  const defaultDrive = nextInfo.drives.find((drive) => drive.isSystem) || nextInfo.drives[0]
+                  setSelectedDrives((previous) =>
+                    previous.filter((root) => nextInfo.drives.some((drive) => drive.root === root)).length
+                      ? previous.filter((root) => nextInfo.drives.some((drive) => drive.root === root))
+                      : [defaultDrive.root],
+                  )
+                }
                 setJob(nextInfo.activeScan)
                 setBooting(false)
                 pollScanRef.current?.(nextInfo.activeScan.id)
               } else if (nextInfo.lastScan?.scanId) {
                 try {
                   const full = await api.getScan(nextInfo.lastScan.scanId)
-                  if (!cancelled && full?.scan) setScan(full.scan)
+                  if (!cancelled && full?.scan) {
+                    setScan(full.scan)
+                    if (Array.isArray(full.scan.drives) && full.scan.drives.length) {
+                      setSelectedDrives(full.scan.drives.map((drive) => drive.root))
+                    }
+                  }
                 } catch (cause) {
                   if (!cancelled) setError(cause.message || t('errorTitle'))
                 }
                 if (!cancelled) setBooting(false)
               } else {
+                if (nextInfo.drives?.length) {
+                  const defaultDrive = nextInfo.drives.find((drive) => drive.isSystem) || nextInfo.drives[0]
+                  setSelectedDrives((previous) =>
+                    previous.filter((root) => nextInfo.drives.some((drive) => drive.root === root)).length
+                      ? previous.filter((root) => nextInfo.drives.some((drive) => drive.root === root))
+                      : [defaultDrive.root],
+                  )
+                }
                 setBooting(false)
               }
               loadQuarantine()
@@ -1171,7 +1355,9 @@ window.__ModuleLoader__.load({
         }, [])
 
         const items = scan?.items || []
+        const availableDrives = info?.drives || []
         const categories = React.useMemo(() => deriveCategories(items), [items])
+        const kinds = React.useMemo(() => deriveKinds(items), [items])
         const groups = React.useMemo(() => deriveGroups(items), [items])
         const totals = React.useMemo(
           () => ({
@@ -1193,10 +1379,12 @@ window.__ModuleLoader__.load({
         React.useEffect(() => {
           if (!scan) {
             setExpanded(new Set())
+            setCollapsedDrives(new Set())
             return
           }
           const top = groups.slice().sort((left, right) => right.bytes - left.bytes).slice(0, 4).map((group) => group.id)
           setExpanded(new Set(top))
+          setCollapsedDrives(new Set())
           // eslint-disable-next-line react-hooks/exhaustive-deps
         }, [scan?.scanId])
 
@@ -1204,6 +1392,7 @@ window.__ModuleLoader__.load({
           const query = search.trim().toLowerCase()
           return items.filter((item) => {
             if (activeCategory !== 'all' && item.categoryId !== activeCategory) return false
+            if (activeKind !== 'all' && kindOfItem(item) !== activeKind) return false
             if (riskFilter !== 'all' && item.risk !== riskFilter) return false
             if (!query) return true
             return (
@@ -1213,12 +1402,12 @@ window.__ModuleLoader__.load({
               item.app.toLowerCase().includes(query)
             )
           })
-        }, [items, activeCategory, riskFilter, search])
+        }, [items, activeCategory, activeKind, riskFilter, search])
 
         const filteredGroups = React.useMemo(() => {
           const byGroup = new Map()
           for (const item of filteredItems) {
-            const id = item.groupId || `${item.categoryId}::${item.app}`
+            const id = groupKeyOfItem(item)
             if (!byGroup.has(id)) byGroup.set(id, [])
             byGroup.get(id).push(item)
           }
@@ -1236,12 +1425,41 @@ window.__ModuleLoader__.load({
                 review: groupItems.filter((item) => item.risk === 'review').length,
                 cleanable: groupItems.filter((item) => item.cleanable).length,
                 visible:
-                  activeCategory !== 'all' || riskFilter !== 'all' || Boolean(search.trim())
+                  activeCategory !== 'all' || activeKind !== 'all' || riskFilter !== 'all' || Boolean(search.trim())
                     ? true
                     : expanded.has(group.id),
               }
             })
-        }, [groups, filteredItems, expanded, activeCategory, riskFilter, search])
+        }, [groups, filteredItems, expanded, activeCategory, activeKind, riskFilter, search])
+
+        const showDriveSections = Array.isArray(scan?.drives) && scan.drives.length > 1
+        const driveSections = React.useMemo(() => {
+          const map = new Map()
+          for (const group of filteredGroups) {
+            const root = group.driveRoot || ''
+            let section = map.get(root)
+            if (!section) {
+              const drive = availableDrives.find((entry) => String(entry.root).toLowerCase() === root.toLowerCase())
+              section = {
+                root,
+                letter: group.driveLetter || driveLetterOfRoot(root),
+                system: Boolean(drive?.isSystem),
+                order: drive ? availableDrives.indexOf(drive) : 999,
+                groups: [],
+                count: 0,
+                bytes: 0,
+              }
+              map.set(root, section)
+            }
+            section.groups.push(group)
+            section.count += group.count
+            section.bytes += group.bytes
+          }
+          return [...map.values()].sort((left, right) => {
+            if (left.order !== right.order) return left.order - right.order
+            return left.letter.localeCompare(right.letter)
+          })
+        }, [filteredGroups, availableDrives])
 
         const selectSafe = () => {
           const next = new Set(selected)
@@ -1249,6 +1467,36 @@ window.__ModuleLoader__.load({
             if (item.cleanable && item.risk === 'safe') next.add(item.id)
           }
           setSelected(next)
+        }
+
+        const selectCurrentSafe = () => {
+          const next = new Set(selected)
+          for (const item of filteredItems) {
+            if (item.cleanable && item.risk === 'safe') next.add(item.id)
+          }
+          setSelected(next)
+        }
+
+        const toggleDrive = (root) => {
+          setSelectedDrives((previous) => {
+            if (previous.includes(root)) {
+              if (previous.length === 1) {
+                notify('info', t('driveKeepOne'))
+                return previous
+              }
+              return previous.filter((entry) => entry !== root)
+            }
+            return [...previous, root]
+          })
+        }
+
+        const toggleDriveSection = (root) => {
+          setCollapsedDrives((previous) => {
+            const next = new Set(previous)
+            if (next.has(root)) next.delete(root)
+            else next.add(root)
+            return next
+          })
         }
 
         const toggleItem = (id, checked) => {
@@ -1278,9 +1526,17 @@ window.__ModuleLoader__.load({
         const startScan = async () => {
           if (pollRef.current) clearTimeout(pollRef.current)
           if (abortRef.current) abortRef.current.abort()
+          if (selectedDrives.length === 0) {
+            setError(t('noDrives'))
+            return
+          }
           setError(null)
           setScan(null)
           setSelected(new Set())
+          setActiveCategory('all')
+          setActiveKind('all')
+          setSearch('')
+          setRiskFilter('all')
           setDetail(null)
           setCleanupOpen(false)
           setJob({
@@ -1289,7 +1545,7 @@ window.__ModuleLoader__.load({
             progress: { phase: 'preparing', filesSeen: 0, dirsSeen: 0, candidates: 0, candidateBytes: 0, currentPath: '', elapsedMs: 0 },
           })
           try {
-            const started = await api.startScan({ deep })
+            const started = await api.startScan({ deep, drives: selectedDrives })
             setJob(started.job)
             pollScanRef.current?.(started.scanId)
           } catch (cause) {
@@ -1430,6 +1686,33 @@ window.__ModuleLoader__.load({
         const appDataTop = (scan?.appDataOverview || []).slice(0, 6)
         const maxAppData = appDataTop.length > 0 ? Math.max(...appDataTop.map((entry) => Number(entry.bytes) || 0)) : 0
 
+        const renderDriveOptions = (className = 'ddc-drives') =>
+          availableDrives.length > 0
+            ? h(
+                'div',
+                { className },
+                availableDrives.map((drive) =>
+                  h(
+                    'label',
+                    { className: 'ddc-drive', key: drive.root, title: drive.root },
+                    h('input', {
+                      type: 'checkbox',
+                      className: 'ddc-check',
+                      checked: selectedDrives.includes(drive.root),
+                      onChange: () => toggleDrive(drive.root),
+                      'aria-label': drive.root,
+                    }),
+                    h('span', { className: 'ddc-drive-name' }, drive.letter),
+                    h(
+                      'span',
+                      { className: 'ddc-drive-meta' },
+                      `${formatBytes(drive.free)} / ${formatBytes(drive.total)} · ${drive.isSystem ? t('driveSystem') : t('driveOther')}`,
+                    ),
+                  ),
+                ),
+              )
+            : h('p', { className: 'ddc-hint' }, t('noDrives'))
+
         const selectedRiskNote = hasRiskySelection ? t('selectionRiskNote') : ''
         const headerActions = []
         if (job?.status === 'running') {
@@ -1462,7 +1745,12 @@ window.__ModuleLoader__.load({
           h(
             'div',
             { className: 'ddc-heading' },
-            h('h1', { className: 'ddc-title' }, t('title')),
+            h(
+              'div',
+              { className: 'ddc-titleline' },
+              h('h1', { className: 'ddc-title' }, t('title')),
+              h('span', { className: 'ddc-version' }, 'v0.2.2'),
+            ),
             h('p', { className: 'ddc-subtitle' }, t('subtitle')),
           ),
           h('div', { className: 'ddc-header-actions' }, ...headerActions),
@@ -1471,6 +1759,13 @@ window.__ModuleLoader__.load({
         const sidebar = h(
           'aside',
           { className: 'ddc-side' },
+          h(
+            'div',
+            { className: 'ddc-card' },
+            h('p', { className: 'ddc-card-title' }, t('driveTitle')),
+            renderDriveOptions(),
+            h('p', { className: 'ddc-hint' }, t('driveHint')),
+          ),
           h(
             'div',
             { className: 'ddc-card' },
@@ -1620,6 +1915,9 @@ window.__ModuleLoader__.load({
               h('span', null, h('strong', null, t('scannedAt'))),
               h('span', null, formatDate(scan.finishedAt, localeId)),
               h('span', null, `${t('elapsed')} ${formatDuration(scan.elapsedMs)}`),
+              Array.isArray(scan.drives) && scan.drives.length
+                ? h('span', null, `${t('scannedDrives')} ${scan.drives.map((drive) => drive.letter).join('、')}`)
+                : null,
               h('span', null, `${t('filesSeen')} ${formatNumber(scan.coverage?.filesSeen || 0)}`),
               scan.warningCount > 0 ? h('span', { className: 'ddc-warn-text' }, `${t('warnings')} ${formatNumber(scan.warningCount)}`) : null,
               scan.coverage?.partial
@@ -1797,6 +2095,20 @@ window.__ModuleLoader__.load({
                 'select',
                 {
                   className: 'ddc-select',
+                  value: activeKind,
+                  'aria-label': t('kindFilter'),
+                  title: t('kindFilter'),
+                  onChange: (event) => setActiveKind(event.target.value),
+                },
+                h('option', { value: 'all' }, t('kind.all')),
+                kinds.map((kind) =>
+                  h('option', { key: kind.id, value: kind.id }, `${kindLabel(t, kind.id)} · ${formatNumber(kind.count)}`),
+                ),
+              ),
+              h(
+                'select',
+                {
+                  className: 'ddc-select',
                   value: riskFilter,
                   'aria-label': t('riskFiltered'),
                   onChange: (event) => setRiskFilter(event.target.value),
@@ -1810,11 +2122,21 @@ window.__ModuleLoader__.load({
                 'div',
                 { className: 'ddc-toolbar-end' },
                 h('button', { type: 'button', className: 'ddc-btn', onClick: selectSafe, disabled: totals.cleanableCount === 0 }, t('selectSafe')),
+                h(
+                  'button',
+                  {
+                    type: 'button',
+                    className: 'ddc-btn ddc-btn-quiet',
+                    onClick: selectCurrentSafe,
+                    disabled: !filteredItems.some((item) => item.cleanable && item.risk === 'safe'),
+                  },
+                  t('selectCurrentSafe'),
+                ),
                 h('button', { type: 'button', className: 'ddc-btn ddc-btn-quiet', onClick: () => setSelected(new Set()), disabled: selected.size === 0 }, t('clear')),
               ),
             ),
           )
-          if (search.trim() || riskFilter !== 'all' || activeCategory !== 'all') {
+          if (search.trim() || riskFilter !== 'all' || activeCategory !== 'all' || activeKind !== 'all') {
             results.push(
               h(
                 'div',
@@ -1828,6 +2150,7 @@ window.__ModuleLoader__.load({
                       setSearch('')
                       setRiskFilter('all')
                       setActiveCategory('all')
+                      setActiveKind('all')
                     },
                   },
                   t('clearFilters'),
@@ -1837,6 +2160,40 @@ window.__ModuleLoader__.load({
           }
           if (filteredItems.length === 0) {
             results.push(h('div', { className: 'ddc-empty' }, h('strong', null, items.length === 0 ? t('emptyScan') : t('noResults'))))
+          } else if (showDriveSections) {
+            results.push(
+              h(
+                'div',
+                { className: 'ddc-drive-sections' },
+                driveSections.map((section) => {
+                  const open = !collapsedDrives.has(section.root)
+                  return h(
+                    'section',
+                    { className: 'ddc-drive-section', key: section.root || 'unknown' },
+                    h(
+                      'button',
+                      {
+                        type: 'button',
+                        className: 'ddc-drive-section-head',
+                        onClick: () => toggleDriveSection(section.root),
+                        'aria-expanded': open,
+                        'aria-label': `${section.letter} ${open ? t('collapse') : t('expand')}`,
+                      },
+                      h(Icon, { name: 'chevron', size: 14, className: cx('ddc-chevron', open && 'open') }),
+                      h(Icon, { name: 'disk', size: 15 }),
+                      h('strong', null, section.letter),
+                      section.system ? h('span', { className: 'ddc-badge muted' }, t('driveSystem')) : null,
+                      h(
+                        'span',
+                        { className: 'ddc-drive-section-meta' },
+                        `${formatNumber(section.count)} ${t('files')} · ${formatBytes(section.bytes)}`,
+                      ),
+                    ),
+                    open ? section.groups.map(renderGroup) : null,
+                  )
+                }),
+              ),
+            )
           } else {
             results.push(h('div', null, filteredGroups.map(renderGroup)))
           }
@@ -1897,6 +2254,13 @@ window.__ModuleLoader__.load({
                         h('p', null, t('initialBody')),
                         h(
                           'div',
+                          { className: 'ddc-hero-setup' },
+                          h('span', { className: 'ddc-hero-setup-label' }, t('driveTitle')),
+                          renderDriveOptions('ddc-drives ddc-drives-inline'),
+                          h('p', { className: 'ddc-hint' }, t('driveHint')),
+                        ),
+                        h(
+                          'div',
                           { className: 'ddc-hero-actions' },
                           h(
                             'button',
@@ -1916,7 +2280,7 @@ window.__ModuleLoader__.load({
                         h(
                           'div',
                           { className: 'ddc-scope-grid' },
-                          CATEGORY_ORDER.slice(0, 9).map((id) =>
+                          CATEGORY_ORDER.map((id) =>
                             h('div', { className: 'ddc-scope-item', key: id }, h(Icon, { name: 'folder', size: 13 }), categoryLabel(t, id)),
                           ),
                         ),
@@ -2070,6 +2434,12 @@ window.__ModuleLoader__.load({
                 h('div', { className: 'ddc-detail-cell' }, h('span', null, t('age')), h('strong', null, formatAge(detail, t))),
                 h('div', { className: 'ddc-detail-cell' }, h('span', null, t('modified')), h('strong', null, formatDate(detail.modifiedMs, localeId))),
                 h('div', { className: 'ddc-detail-cell' }, h('span', null, t('app')), h('strong', null, detail.app)),
+                detail.appOriginal && detail.appOriginal !== detail.app
+                  ? h('div', { className: 'ddc-detail-cell' }, h('span', null, t('appOriginal')), h('strong', null, detail.appOriginal))
+                  : null,
+                detail.company
+                  ? h('div', { className: 'ddc-detail-cell' }, h('span', null, t('company')), h('strong', null, detail.company))
+                  : null,
                 h('div', { className: 'ddc-detail-cell' }, h('span', null, t('risk')), h('strong', null, riskLabel(t, detail.risk))),
                 h('div', { className: 'ddc-detail-cell' }, h('span', null, t('category')), h('strong', null, categoryLabel(t, detail.categoryId))),
               ),
@@ -2314,6 +2684,36 @@ window.__ModuleLoader__.load({
                         ),
                       ),
                     ),
+                    Array.isArray(scan.orphanApps) && scan.orphanApps.length
+                      ? h(
+                          'div',
+                          { className: 'ddc-section' },
+                          h('h4', null, `${t('orphanAppsTitle')} · ${formatNumber(scan.orphanApps.length)}`),
+                          h('p', { className: 'ddc-hint' }, t('orphanAppsCount')),
+                          h(
+                            'div',
+                            { className: 'ddc-warning-list' },
+                            scan.orphanApps.slice(0, 12).map((orphan) =>
+                              h(
+                                'div',
+                                { className: 'ddc-warning-item', key: orphan.path },
+                                h('code', null, orphan.path),
+                                h(
+                                  'p',
+                                  null,
+                                  [
+                                    orphan.app,
+                                    orphan.appOriginal && orphan.appOriginal !== orphan.app ? orphan.appOriginal : '',
+                                    orphan.company || '',
+                                  ]
+                                    .filter(Boolean)
+                                    .join(' · '),
+                                ),
+                              ),
+                            ),
+                          ),
+                        )
+                      : null,
                     h(
                       'div',
                       { className: 'ddc-section' },

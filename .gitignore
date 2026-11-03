@@ -5,7 +5,9 @@ coverage/
 
 # Local plugin data created during development
 last-scan.json
+quarantine-roots.json
 Quarantine/
+$DSH-Disk-Cleanup/
 *.log
 
 # Environment files and local secrets

@@ -1,7 +1,7 @@
 {
   "name": "dsh-disk-cleanup",
-  "version": "0.1.1",
-  "description": "Windows disk space analysis and reversible cleanup workspace for DeepSeek Harness, with a left sidebar panel.",
+  "version": "0.2.2",
+  "description": "Windows disk space analysis and reversible cleanup workspace for DeepSeek Harness: multi-drive scanning, uninstall leftovers, Chinese app names, and junk-type filters.",
   "type": "module",
   "main": "index.js",
   "exports": {
@@ -19,8 +19,7 @@
     "locale/*.json",
     "icon.svg",
     "README.zh.md",
-    "README.en.md",
-    "LICENSE"
+    "README.en.md"
   ],
   "keywords": [
     "deepseek",
