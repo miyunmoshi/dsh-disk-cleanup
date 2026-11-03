@@ -1,0 +1,6 @@
+- insert:
+    - id: dsh-disk-cleanup
+      name: dsh-disk-cleanup
+      config:
+        maxScanMs: 180000
+        maxCandidates: 25000

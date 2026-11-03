@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "Disk Cleanup",
+    "description": "Scans temporary files, browser and AppData caches, update leftovers, logs, large files, and duplicates, then explains every candidate before you choose what moves to a reversible quarantine."
+  }
+}
